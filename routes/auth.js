@@ -75,8 +75,7 @@ function checkAdmin(req, res, next) {
 }
 
 // Middleware để xác thực token
-// Middleware để xác thực token
-// Middleware để xác thực token
+
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers.authorization;
 
