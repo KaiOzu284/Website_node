@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('./schemas/product');
-
+const ResponseHandle = require('./helper/ResponseHandle');
+const multer = require('multer'); // Sử dụng Multer để xử lý tải lên hình ảnh
 // Route để lấy tất cả sản phẩm
 router.get('/products', async (req, res) => {
     try {
         const products = await Product.find();
-        res.json(products);
+        ResponseHandle.ResponseSend(res, true, 200, products);
     } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy sản phẩm.' });
+        ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi khi lấy sản phẩm.' });
     }
 });
 
@@ -20,33 +21,55 @@ router.get('/products/:id', async (req, res) => {
         const product = await Product.findById(productId);
         
         if (!product) {
-            return res.status(404).json({ message: 'Không tìm thấy sản phẩm.' });
+            return ResponseHandle.ResponseSend(res, false, 404, { message: 'Không tìm thấy sản phẩm.' });
         }
 
-        res.json(product);
+        ResponseHandle.ResponseSend(res, true, 200, product);
     } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy sản phẩm.' });
+        ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi khi lấy sản phẩm.' });
     }
 });
 
-// Route để thêm sản phẩm
-router.post('/products', checkAdmin, async (req, res) => {
-    const { name, category, price, image } = req.body;
+// Cấu hình Multer để lưu trữ hình ảnh vào thư mục 'uploads'
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, '/public/images');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Route để thêm sản phẩm với hình ảnh
+router.post('/addProducts', upload.single('image'), async (req, res) => {
+    const { name, category, price } = req.body;
 
     try {
-        const product = new Product({
+        // Kiểm tra xem có file hình ảnh được gửi lên không
+        if (!req.file) {
+            return ResponseHandle.ResponseSend(res, false, 400, { message: 'Vui lòng chọn một hình ảnh.' });
+        }
+
+        // Tạo sản phẩm mới với đường dẫn hình ảnh
+        const newProduct = new Product({
             name,
             category,
             price,
-            image
+            imagePath: req.file.path // Đường dẫn của hình ảnh được lưu vào trường imagePath
         });
 
-        await product.save();
-        res.status(201).json(product);
+        await newProduct.save();
+        // res.status(201).json(newProduct);
+        ResponseHandle.ResponseSend(res, true, 200, newProduct);
     } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi thêm sản phẩm.' });
+        ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi khi thêm sản phẩm.' });
     }
 });
+
+
+module.exports = router;
 
 // Route để xóa sản phẩm
 router.delete('/products/:id', checkAdmin, async (req, res) => {
@@ -56,13 +79,13 @@ router.delete('/products/:id', checkAdmin, async (req, res) => {
         const product = await Product.findById(productId);
 
         if (!product) {
-            return res.status(404).json({ message: 'Không tìm thấy sản phẩm.' });
+            return ResponseHandle.ResponseSend(res, false, 404, { message: 'Không tìm thấy sản phẩm.' });
         }
 
         await product.remove();
-        res.json({ message: 'Xóa sản phẩm thành công.' });
+        ResponseHandle.ResponseSend(res, true, 200, { message: 'Xóa sản phẩm thành công.' });
     } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi xóa sản phẩm.' });
+        ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi khi xóa sản phẩm.' });
     }
 });
 
@@ -75,7 +98,7 @@ router.put('/products/:id', checkAdmin, async (req, res) => {
         const product = await Product.findById(productId);
 
         if (!product) {
-            return res.status(404).json({ message: 'Không tìm thấy sản phẩm.' });
+            return ResponseHandle.ResponseSend(res, false, 404, { message: 'Không tìm thấy sản phẩm.' });
         }
 
         product.name = name;
@@ -84,9 +107,9 @@ router.put('/products/:id', checkAdmin, async (req, res) => {
         product.image = image;
 
         await product.save();
-        res.json(product);
+        ResponseHandle.ResponseSend(res, true, 200, product);
     } catch (error) {
-        res.status(500).json({ message: 'Đã xảy ra lỗi khi sửa sản phẩm.' });
+        ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi khi sửa sản phẩm.' });
     }
 });
 

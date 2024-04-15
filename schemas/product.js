@@ -7,9 +7,9 @@ const productSchema = new mongoose.Schema({
         trim: true
     },
     category: {
-        type: String,
-        required: true,
-        trim: true
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Category',
+        required: true
     },
     price: {
         type: Number,
@@ -19,8 +19,14 @@ const productSchema = new mongoose.Schema({
     image: {
         type: String,
         required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-});
+}, {
+    collection: 'Product'  // Tên của bảng (collection)
+  });
 
 const Product = mongoose.model('Product', productSchema);
 

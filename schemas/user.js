@@ -22,7 +22,9 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 }, {
   collection: 'User'  // Tên của bảng (collection)
 });

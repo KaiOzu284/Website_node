@@ -1,9 +1,18 @@
 const nodemailer = require('nodemailer');
 
-let transporter = nodemailer.createTransport({
-    service: 'gmail',
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true cho cổng 465, false cho các cổng khác như 587
     auth: {
-        user: 'testhutech284@gmail.com',  // Địa chỉ email của bạn
-        pass: 'hoanguyen284'  // Mật khẩu email của bạn
+        user: 'testhutech284@gmail.com', // Thay đổi thành email thực của bạn
+        pass: 'ignb iyac yofx daag' // Mật khẩu ứng dụng hoặc mật khẩu thực, đảm bảo an toàn
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
+
+module.exports = transporter;
+
+ 

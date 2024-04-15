@@ -6,11 +6,12 @@ const ResponseHandle = require('../helper/ResponseHandle');
 const jwt = require('jsonwebtoken');
 const transporter = require('../helper/nodeEmail');
 const SECRET_KEY = process.env.SECRET_KEY || 'yourSecretKey';
+const cookieParser = require('cookie-parser');
 require('express-async-errors');
 
-
+router.use(cookieParser());
 //Route đăng ký
-router.post('/api/register', async (req, res) => {
+router.post('/register', async (req, res) => {
   const { email, username, password } = req.body;
 
   try {
@@ -35,7 +36,7 @@ router.post('/api/register', async (req, res) => {
 });
 
 // Route đăng nhập
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
@@ -46,6 +47,10 @@ router.post('/api/login', async (req, res) => {
 
       if (isMatch) {
         const token = jwt.sign({ userId: user.id ,username: user.username, role: user.role }, 'yourSecretKey', { expiresIn: '1h' });
+
+        // Lưu thông tin người dùng vào cookie
+        res.cookie('token', token, { maxAge: 3600000}); // Thời gian sống 1 giờ
+
         ResponseHandle.ResponseSend(res, true, 200, { message: 'Đăng nhập thành công', token });
       } else {
         ResponseHandle.ResponseSend(res, false, 400, { message: 'Tên đăng nhập hoặc mật khẩu không đúng' });
@@ -130,65 +135,78 @@ router.post('/change-password', verifyToken, async (req, res) => {
 });
 
 
-
 // Route cho việc quên mật khẩu
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
 
   try {
-      const user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-      if (user) {
-          // Tạo token để thiết lập lại mật khẩu
-          const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    if (!user) {
+      return ResponseHandle.ResponseSend(res, false, 400, { message: 'Email không tồn tại' });
+    }
 
-          // Gửi email chứa link reset password tới user
-          const resetPasswordLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    // Tạo token để thiết lập lại mật khẩu
+    const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '1h' });
 
-          let mailOptions = {
-              from: 'testhutech284@gmail.com',  // Địa chỉ email của bạn
-              to: email,
-              subject: 'Reset Password',
-              text: `Vui lòng click vào đường link sau để thiết lập lại mật khẩu: ${resetPasswordLink}`
-          };
+    // Lưu token vào user document trong cơ sở dữ liệu
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 giờ
+    await user.save();
 
-          transporter.sendMail(mailOptions, (error, info) => {
-              if (error) {
-                  console.log(error);
-                  ResponseHandle.ResponseSend(res, false, 500, { message: 'Lỗi khi gửi email' });
-              } else {
-                  ResponseHandle.ResponseSend(res, true, 200, { message: 'Vui lòng kiểm tra email để thiết lập lại mật khẩu' });
-              }
-          });
+    // Cập nhật FRONTEND_URL
+    const resetPasswordLink = `http://localhost:3000/resetPassword?token=${token}`;
+
+    let mailOptions = {
+      from: 'testhutech284@gmail.com',  // Địa chỉ email của bạn
+      to: email,
+      subject: 'Reset Password',
+      text: `Vui lòng click vào đường link sau để thiết lập lại mật khẩu: ${resetPasswordLink}`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        ResponseHandle.ResponseSend(res, false, 500, { message: 'Lỗi khi gửi email' });
       } else {
-          ResponseHandle.ResponseSend(res, false, 400, { message: 'Email không tồn tại' });
+        ResponseHandle.ResponseSend(res, true, 200, { message: 'Vui lòng kiểm tra email để thiết lập lại mật khẩu' });
       }
+    });
   } catch (error) {
-      console.error(error);
-      ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi, vui lòng thử lại sau.' });
+    console.error(error);
+    ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi, vui lòng thử lại sau.' });
   }
 });
+
 
 // Route để thiết lập lại mật khẩu
 router.post('/reset-password', async (req, res) => {
   const { token, newPassword } = req.body;
 
   try {
-      // Giải mã token để lấy userId
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
-      // Mã hóa mật khẩu mới và cập nhật vào cơ sở dữ liệu
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      const user = await User.findById(decoded.userId);
-      user.password = hashedPassword;
-      await user.save();
+    // Giải mã token để lấy userId sử dụng giá trị cố định cho SecretKey
+    const decoded = jwt.verify(token, SECRET_KEY);
+    
+    // Mã hóa mật khẩu mới và cập nhật vào cơ sở dữ liệu
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const user = await User.findById(decoded.userId);
+    
+    if (!user) {
+      return ResponseHandle.ResponseSend(res, false, 400, { message: 'Người dùng không tồn tại' });
+    }
+    
+    user.password = hashedPassword;
+    await user.save();
 
-      ResponseHandle.ResponseSend(res, true, 200, { message: 'Mật khẩu đã được thiết lập lại thành công' });
+    ResponseHandle.ResponseSend(res, true, 200, { message: 'Mật khẩu đã được thiết lập lại thành công' });
   } catch (error) {
-      console.error(error);
-      ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi, vui lòng thử lại sau.' });
+    console.error(error);
+    ResponseHandle.ResponseSend(res, false, 500, { message: 'Token không hợp lệ hoặc đã xảy ra lỗi' });
   }
 });
+
+
+
 
 router.get('/admin', checkAdmin, (req, res) => {
   res.render('admin');  // Render trang admin nếu người dùng có quyền truy cập
