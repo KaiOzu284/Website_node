@@ -62,23 +62,11 @@ router.post('/login', async (req, res) => {
     ResponseHandle.ResponseSend(res, false, 500, { message: 'Đã xảy ra lỗi, vui lòng thử lại sau.' });
   }
 });
-
-// Kiểm tra role
-function checkAdmin(req, res, next) {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return ResponseHandle.ResponseSend(res, false, 403, 'Bạn không có quyền truy cập trang này!');
-  }
-
-  jwt.verify(token.split(' ')[1], 'yourSecretKey', (err, decoded) => {
-    if (err || decoded.role !== 'admin') {
-      return ResponseHandle.ResponseSend(res, false, 403, 'Bạn không có quyền truy cập trang này!');
-    }
-    next();
-  });
-}
-
+// Route đăng xuất
+router.get('/logout', (req, res) => {
+  res.clearCookie('token');  // Xóa cookie lưu token
+  ResponseHandle.ResponseSend(res, true, 200, { message: 'Bạn đã đăng xuất khỏi tài khoản'});
+});
 // Middleware để xác thực token
 
 function verifyToken(req, res, next) {
@@ -101,6 +89,43 @@ function verifyToken(req, res, next) {
   });
 }
 
+//Middleware kiểm tra role
+function checkAdmin(req, res, next) {
+  // Lấy token từ cookie
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(403).render('404', { message: 'Bạn không có quyền truy cập trang này!' });
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      if (err || decoded.role !== 'admin') {
+        return res.status(403).render('404', { message: 'Bạn không có quyền truy cập trang này!' });
+      }
+      req.user = decoded; // Lưu thông tin người dùng vào req để sử dụng sau này
+      next();
+  });
+}
+// Tuyến đường để chuyển quyền từ user thành admin
+router.put('/change-role/:id', checkAdmin, async (req, res) => {
+  try {
+      // Kiểm tra xem người dùng cần được chuyển quyền có tồn tại không
+      const user = await User.findById(req.params.id);
+      if (!user) {
+          return ResponseHandle.ResponseSend(res, false, 404, { message: 'Người dùng không tồn tại' });
+      }
+      
+      // Cập nhật vai trò của người dùng thành 'admin'
+      user.role = 'admin';
+      await user.save();
+
+      // Trả về thông báo thành công
+      ResponseHandle.ResponseSend(res, true, 200, { message: 'Vai trò của người dùng đã được chuyển thành admin' });
+  } catch (error) {
+      console.error(error);
+      ResponseHandle.ResponseSend(res, false, 500, { message: 'Lỗi khi chuyển quyền của người dùng' });
+  }
+});
 
 // Route đổi mật khẩu
 router.post('/change-password', verifyToken, async (req, res) => {
@@ -204,8 +229,6 @@ router.post('/reset-password', async (req, res) => {
     ResponseHandle.ResponseSend(res, false, 500, { message: 'Token không hợp lệ hoặc đã xảy ra lỗi' });
   }
 });
-
-
 
 
 router.get('/admin', checkAdmin, (req, res) => {

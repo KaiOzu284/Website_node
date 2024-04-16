@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 //Tạo Danh Mục Mới:
-router.post('/categories', async (req, res) => {
+router.post('/new', async (req, res) => {
   const { name } = req.body;
 
   try {
@@ -18,7 +18,7 @@ router.post('/categories', async (req, res) => {
 });
 
 //Đọc Tất Cả Danh Mục:
-router.get('/categories', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
       const categories = await Category.find();
       ResponseHandle.ResponseSend(res, true, 200, { categories });
@@ -28,7 +28,7 @@ router.get('/categories', async (req, res) => {
   });
 
   //Đọc Một Danh Mục Cụ Thể:
-  router.get('/categories/:id', async (req, res) => {
+  router.get('/:id', async (req, res) => {
     const { id } = req.params;
   
     try {
@@ -43,7 +43,7 @@ router.get('/categories', async (req, res) => {
   });
   
 // Cập Nhật Danh Mục:
-router.put('/categories/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     const { id } = req.params;
   
     try {
@@ -63,7 +63,7 @@ router.put('/categories/:id', async (req, res) => {
   });
 
   //Xóa Danh Mục:
-  router.delete('/categories/:id', async (req, res) => {
+  router.delete('/:id', async (req, res) => {
     const { id } = req.params;
   
     try {
