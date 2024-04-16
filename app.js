@@ -8,6 +8,7 @@ const connectDB = require('./db');
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
 var authRouter = require('./routes/auth');
+var productRouter = require('./routes/product');
 const categoryRouter = require('./routes/category');
 var app = express();
 
@@ -29,6 +30,7 @@ app.use('/public', express.static('public'));
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter);
+app.use('/product', productRouter);
 app.use('/category', categoryRouter);
 // Thêm tuyến đường GET cho forgotPassword
 app.get('/forgotPassword', function(req, res) {
