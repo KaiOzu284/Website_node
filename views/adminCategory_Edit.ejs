@@ -262,21 +262,19 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Danh mục</h1>
                        
                     </div>
 
                     <!-- Content Row -->
-                    <div class="row">
-
-                       <h1>Chào mừng đến với trang Admin</h1>
-
-
-             
-
-                  
-
-                </div>
+                    <div class="container mt-5">
+                        <h2>Sửa Danh Mục</h2>
+                        <form id="editCategoryForm">
+                            <label for="categoryName">Tên Danh Mục:</label>
+                            <input type="text" id="categoryName" name="name" class="form-control"><br><br>
+                            <button type="submit" class="btn btn-primary">Cập Nhật Danh Mục</button>
+                        </form>
+                    </div>
                 <!-- /.container-fluid -->
 
             </div>
@@ -335,11 +333,56 @@
 
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Lấy ID của danh mục từ URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryId = urlParams.get('id');
 
-    <!-- Page level custom scripts -->
-    <script src="../public/js/demo/chart-area-demo.js"></script>
-    <script src="../public/js/demo/chart-pie-demo.js"></script>
+            // Lấy thông tin danh mục từ API và điền vào form
+            $.ajax({
+                url: `/category/${categoryId}`,
+                type: 'GET',
+                success: function(response) {
+                    if(response.success) {
+                        const category = response.data.category;
+                        $('#categoryName').val(category.name);
+                    } else {
+                        alert('Lỗi khi tải dữ liệu: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Không thể kết nối đến server.');
+                }
+            });
 
+            // Xử lý sự kiện submit form
+            $('#editCategoryForm').submit(function(event) {
+                event.preventDefault();
+                
+                const newName = $('#categoryName').val();
+
+                // Gửi yêu cầu cập nhật thông tin danh mục
+                $.ajax({
+                    url: `/category/${categoryId}`,
+                    type: 'PUT',
+                    data: { name: newName },
+                    success: function(response) {
+                        if(response.success) {
+                            alert('Danh mục đã được cập nhật thành công.');
+                            // Điều hướng sau khi cập nhật thành công
+                            window.location.href = '/adminCategory';
+                        } else {
+                            alert('Lỗi khi cập nhật danh mục: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Không thể kết nối đến server khi cập nhật danh mục.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
-
 </html>

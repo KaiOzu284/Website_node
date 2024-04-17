@@ -262,21 +262,19 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Sản phẩm</h1>
                        
                     </div>
 
                     <!-- Content Row -->
-                    <div class="row">
-
-                       <h1>Chào mừng đến với trang Admin</h1>
-
-
-             
-
-                  
-
-                </div>
+                    <div class="container mt-5">
+                        <h2>Thêm Danh mục</h2>
+                        <form id="addCategoryForm">
+                            <label for="categoryName">Tên Danh Mục:</label>
+                            <input type="text" id="categoryName" name="name" class="form-control" required><br><br>
+                            <button type="submit" class="btn btn-primary">Thêm Danh Mục</button>
+                        </form>
+                    </div>
                 <!-- /.container-fluid -->
 
             </div>
@@ -335,11 +333,31 @@
 
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="../public/js/demo/chart-area-demo.js"></script>
-    <script src="../public/js/demo/chart-pie-demo.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#addCategoryForm').submit(function(event) {
+                event.preventDefault();
+                const categoryName = $('#categoryName').val();
+                $.ajax({
+                    url: '/category/new',
+                    type: 'POST',
+                    data: { name: categoryName },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Danh mục đã được thêm thành công!');
+                            window.location.href = '/adminCategory'; // Điều hướng đến trang danh sách danh mục sau khi thêm thành công
+                        } else {
+                            alert('Lỗi khi thêm danh mục: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Không thể kết nối đến server.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

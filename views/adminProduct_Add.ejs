@@ -262,21 +262,31 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                       
+                        <h1 class="h3 mb-0 text-gray-800">Sản phẩm</h1>
                     </div>
-
                     <!-- Content Row -->
-                    <div class="row">
-
-                       <h1>Chào mừng đến với trang Admin</h1>
-
-
-             
-
-                  
-
-                </div>
+                    <div class="container mt-5">
+                        <h2>Sửa Sản Phẩm</h2>
+                        <form id="addProductForm">
+                            <label for="name">Tên sản phẩm:</label>
+                            <input type="text" id="name" name="name"class="form-control" required><br><br>
+                    
+                            <div class="form-group">
+                                <label for="category">Danh mục sản phẩm</label>
+                                <select id="category" name="category" class="form-control">
+                                    <!-- Các tùy chọn danh mục sẽ được đổ vào đây từ API -->
+                                </select>
+                            </div><br><br>
+                    
+                            <label for="price">Giá:</label>
+                            <input type="number" id="price" name="price" class="form-control" required><br><br>
+                    
+                            <label for="image">Hình ảnh:</label>
+                            <input type="file" id="image" name="image" class="form-control-file" required><br><br>
+                    
+                            <button type="button" class="btn btn-primary" onclick="submitProductForm()">Thêm Sản Phẩm</button>
+                        </form>
+                    </div>
                 <!-- /.container-fluid -->
 
             </div>
@@ -335,11 +345,50 @@
 
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+         // Khi trang tải xong, thực hiện lấy danh mục và thiết lập form
+    $.ajax({
+        url: '/category/', // Đây phải là URL chính xác tới endpoint API danh mục
+        type: 'GET',
+        success: function(response) {
+            var select = $('#category');
+            response.data.categories.forEach(function(category) {
+                select.append($('<option>', {
+                    value: category._id,
+                    text: category.name
+                }));
+            });
+        },
+        error: function() {
+            alert('Không thể tải danh sách danh mục');
+        }
+    });
+        function submitProductForm() {
+            var formData = new FormData($('#addProductForm')[0]);
 
-    <!-- Page level custom scripts -->
-    <script src="../public/js/demo/chart-area-demo.js"></script>
-    <script src="../public/js/demo/chart-pie-demo.js"></script>
-
+            $.ajax({
+                url: 'product/new', // Đảm bảo đường dẫn này phù hợp với API của bạn
+                type: 'POST',
+                data: formData,
+                processData: false,  // Không để jQuery xử lý dữ liệu gửi đi
+                contentType: false,  // Không sử dụng contentType mặc định
+                success: function (data) {
+                    if (data.success) {
+                        alert('Sản phẩm đã được thêm thành công!');
+                        window.location.href = '/adminProduct'; // Điều hướng sau khi cập nhật thành công
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Đã xảy ra lỗi', error);
+                    alert('Lỗi khi thêm sản phẩm: ' + xhr.responseText);
+                }
+            });
+        }
+        
+    </script>
+    
 </body>
-
 </html>

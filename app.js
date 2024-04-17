@@ -36,7 +36,6 @@ app.use('/category', categoryRouter);
 app.get('/forgotPassword', function(req, res) {
   res.render('forgotPassword');  // Sử dụng EJS để render trang
 });
-
 // Xử lý lỗi 404, chuyển tiếp đến trình xử lý lỗi
 app.use(function(req, res, next) {
   next(createError(404));

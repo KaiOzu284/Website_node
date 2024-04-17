@@ -262,21 +262,33 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                       
+                        <h1 class="h3 mb-0 text-gray-800">Sản phẩm</h1>
                     </div>
-
                     <!-- Content Row -->
-                    <div class="row">
-
-                       <h1>Chào mừng đến với trang Admin</h1>
-
-
-             
-
-                  
-
-                </div>
+                    <div class="container mt-5">
+                        <h2>Sửa Sản Phẩm</h2>
+                        <form id="editProductForm">
+                            <div class="form-group">
+                                <label for="productName">Tên Sản Phẩm</label>
+                                <input type="text" class="form-control" id="productName" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Danh mục sản phẩm</label>
+                                <select id="category" name="category" class="form-control">
+                                    <!-- Các tùy chọn danh mục sẽ được đổ vào đây từ API -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="productPrice">Giá</label>
+                                <input type="number" class="form-control" id="productPrice" name="price" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="productImage">Hình Ảnh</label>
+                                <input type="file" class="form-control-file" id="productImage" name="image">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Cập Nhật Sản Phẩm</button>
+                        </form>
+                    </div>
                 <!-- /.container-fluid -->
 
             </div>
@@ -335,11 +347,66 @@
 
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Khi trang tải xong, thực hiện lấy danh mục và thiết lập form
+    $.ajax({
+        url: '/category/', // Đây phải là URL chính xác tới endpoint API danh mục
+        type: 'GET',
+        success: function(response) {
+            var select = $('#category');
+            response.data.categories.forEach(function(category) {
+                select.append($('<option>', {
+                    value: category._id,
+                    text: category.name
+                }));
+            });
+        },
+        error: function() {
+            alert('Không thể tải danh sách danh mục');
+        }
+    });
+    // Hàm này giúp lấy giá trị của một tham số từ URL.
+function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&'); // Xử lý các ký tự đặc biệt trong tên tham số
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), // Tạo regex để tìm kiếm tham số
+        results = regex.exec(url);
+    if (!results) return null; // Nếu không tìm thấy tham số, trả về null
+    if (!results[2]) return ''; // Nếu tham số không có giá trị, trả về chuỗi rỗng
+    return decodeURIComponent(results[2].replace(/\+/g, ' ')); // Giải mã và trả về giá trị tham số
+}
 
-    <!-- Page level custom scripts -->
-    <script src="../public/js/demo/chart-area-demo.js"></script>
-    <script src="../public/js/demo/chart-pie-demo.js"></script>
+$(document).ready(function () {
+    var productId = getParameterByName('id');  // Đảm bảo rằng bạn có hàm này để lấy ID từ URL
 
+    $('#editProductForm').on('submit', function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: `product/${productId}`,  // Đường dẫn API chính xác
+            type: 'PUT',
+            data: formData,
+            processData: false,  // Cần thiết cho việc gửi FormData
+            contentType: false,  // Cần thiết cho việc gửi FormData
+            success: function (data) {
+                if (data.success) {
+                    alert('Cập nhật sản phẩm thành công!');
+                    window.location.href = '/adminProduct'; // Điều hướng sau khi cập nhật thành công
+                } else {
+                    alert('Lỗi: ' + data.message);  // Thông báo lỗi từ server
+                }
+            },
+            error: function (error) {
+                console.error('Đã xảy ra lỗi:', error);
+                alert('Lỗi khi gửi form: ' + error.message);  // Thông báo lỗi kết nối
+            }
+        });
+    });
+});
+});
+
+</script>
 </body>
-
 </html>

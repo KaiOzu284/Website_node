@@ -262,20 +262,30 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                       
+                        <h1 class="h3 mb-0 text-gray-800">Sản phẩm</h1>
+                        <button id="btnAddProduct" class="btn btn-primary">Thêm Sản Phẩm</button>
                     </div>
 
                     <!-- Content Row -->
-                    <div class="row">
-
-                       <h1>Chào mừng đến với trang Admin</h1>
-
-
-             
-
-                  
-
+                    <div class="container">
+                        <h2>Danh sách sản phẩm</h2>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="productTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tên</th>
+                                        <th>Danh Mục</th>
+                                        <th>Giá</th>
+                                        <th>Hình Ảnh</th>
+                                        <th>Chức Năng</th>  
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Các dòng sản phẩm sẽ được thêm vào đây bằng JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.container-fluid -->
 
@@ -335,10 +345,65 @@
 
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+       $(document).ready(function() {
+    $.ajax({
+        url: '/product/',  // Đảm bảo URL này đúng với cấu hình của bạn
+        type: 'GET',
+        success: function(response) {
+            if(response.success) {
+                const products = response.data;
+                products.forEach(product => {
+                    console.log(product._id);
+                    $('#productTable tbody').append(`
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>${product.categoryName}</td>
+                            <td>${product.price}</td>
+                            <td><img src="/public/${product.image}" alt="Hình ảnh sản phẩm" style="width: 100px;"></td>
+                            <td>
+                                <a href="/adminProduct_Edit?id=${product._id}" class="btn btn-primary">Chỉnh sửa</a> <!-- Thêm nút chỉnh sửa -->
+                                <button onclick="deleteProduct('${product._id}')" class="btn btn-danger">Xóa</button>
+                            </td>
+                        </tr>
+                    `);
+                });
+            } else {
+                alert('Lỗi khi tải dữ liệu: ' + response.message);
+            }
+        },
+        error: function() {
+            alert('Không thể kết nối đến server.');
+        }
+    });
+});
+$(document).ready(function() {
+        $('#btnAddProduct').click(function() {
+            window.location.href = '/adminProduct_Add'; // Điều hướng đến trang thêm danh mục khi nhấn nút "Thêm Danh Mục"
+        });
+    });
+        function deleteProduct(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
+                $.ajax({
+                    url: `/product/${id}`,
+                    type: 'DELETE',
+                    success: function(response) {
+                        if(response.success) {
+                            alert('Sản phẩm đã được xóa thành công.');
+                            location.reload(); // Tải lại trang để cập nhật danh sách
+                        } else {
+                            alert('Lỗi khi xóa sản phẩm: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Không thể kết nối đến server khi xóa sản phẩm.');
+                    }
+                });
+            }
+        }
+        </script>
 
-    <!-- Page level custom scripts -->
-    <script src="../public/js/demo/chart-area-demo.js"></script>
-    <script src="../public/js/demo/chart-pie-demo.js"></script>
 
 </body>
 

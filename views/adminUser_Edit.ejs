@@ -262,21 +262,23 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <h1 class="h3 mb-0 text-gray-800">User</h1>
                        
                     </div>
 
                     <!-- Content Row -->
-                    <div class="row">
-
-                       <h1>Chào mừng đến với trang Admin</h1>
-
-
-             
-
-                  
-
-                </div>
+                    <div class="container mt-5">
+                        <h2>Sửa Thông Tin Người Dùng</h2>
+                        <form id="editUserForm">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email"class="form-control"><br><br>
+                            <label for="username">Tên người dùng:</label>
+                            <input type="text" id="username" name="username"class="form-control"><br><br>
+                            <label for="password">Mật khẩu:</label>
+                            <input type="password" id="password" name="password"class="form-control"><br><br>
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                        </form>
+                    </div>
                 <!-- /.container-fluid -->
 
             </div>
@@ -335,11 +337,52 @@
 
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+     $(document).ready(function() {
+    // Hàm này giúp lấy giá trị của một tham số từ URL.
+    function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
 
-    <!-- Page level custom scripts -->
-    <script src="../public/js/demo/chart-area-demo.js"></script>
-    <script src="../public/js/demo/chart-pie-demo.js"></script>
+    // Sử dụng hàm trên để lấy giá trị của tham số 'id'
+    var actualUserId = getParameterByName('id'); // '661d3919250f59f8fc1f4f92' sẽ được lấy ra ở đây
 
+    $('#editUserForm').submit(function(event) {
+        event.preventDefault();
+
+        const formData = {
+            email: $('#email').val(),
+            username: $('#username').val(),
+            password: $('#password').val(),
+        };
+
+        // Kiểm tra nếu actualUserId có giá trị hợp lệ trước khi thực hiện AJAX call
+        if(actualUserId) {
+            $.ajax({
+                url: `/user/${actualUserId}`, // Sử dụng actualUserId từ URL
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    alert('Thông tin người dùng đã được cập nhật');
+                    window.location.href = '/adminUser';
+                },
+                error: function() {
+                    alert('Đã xảy ra lỗi khi cập nhật thông tin người dùng');
+                }
+            });
+        } else {
+            alert('ID người dùng không hợp lệ hoặc không tồn tại.');
+        }
+    });
+});
+
+    </script>
 </body>
-
 </html>

@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
       if (!deletedUser) {
         return ResponseHandle.ResponseSend(res, false, 404, { message: 'Người dùng không tồn tại' });
       }
-      ResponseHandle.ResponseSend(res, true, 200, { message: 'Danh sách người dùng' });
+      ResponseHandle.ResponseSend(res, true, 200, { message: 'Danh sách người dùng',deletedUser });
     } catch (error) {
       console.error(error);
       ResponseHandle.ResponseSend(res, false, 500, { message: 'Lỗi khi xóa người dùng' });

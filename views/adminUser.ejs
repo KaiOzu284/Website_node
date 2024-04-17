@@ -262,20 +262,30 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <h1 class="h3 mb-0 text-gray-800">User</h1>
                        
                     </div>
 
                     <!-- Content Row -->
-                    <div class="row">
-
-                       <h1>Chào mừng đến với trang Admin</h1>
-
-
-             
-
-                  
-
+                    <div class="container">
+                        <h2>Danh sách người dùng</h2>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="userTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tên tài khoản</th>
+                                        <th>Email</th>  
+                                        <th>Mật khẩu</th>  
+                                        <th>Role</th>   
+                                        <th>Chức năng</th>   
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Các dòng sản phẩm sẽ được thêm vào đây bằng JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.container-fluid -->
 
@@ -335,10 +345,61 @@
 
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+    $.ajax({
+        url: '/user/',  
+        type: 'GET',
+        success: function(response) {
+            if(response.success) {
+                const users = response.data.users; // Truy cập vào trường categories của đối tượng phản hồi
+                users.forEach(user => {
+                    console.log(user._id); // Sử dụng _id hoặc id tùy theo cách bạn đã đặt trong schema của mongoose
+                    $('#userTable tbody').append(`
+                        <tr>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>${user.password}</td>
+                            <td>${user.role}</td>
+                            <td>
+                                <a href="/adminUser_Edit?id=${user._id}" class="btn btn-primary">Sửa</a> <!-- Thêm nút chỉnh sửa -->
+                                <button onclick="deleteUser('${user._id}')" class="btn btn-danger">Xóa</button>
+                            </td>
+                        </tr>
+                    `);
+                });
+            } else {
+                alert('Lỗi khi tải dữ liệu: ' + response.message);
+            }
+        },
+        error: function() {
+            alert('Không thể kết nối đến server.');
+        }
+    });
+});
 
-    <!-- Page level custom scripts -->
-    <script src="../public/js/demo/chart-area-demo.js"></script>
-    <script src="../public/js/demo/chart-pie-demo.js"></script>
+        function deleteUser(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa danh mục này không?')) {
+                $.ajax({
+                    url: `/user/${id}`,
+                    type: 'DELETE',
+                    success: function(response) {
+                        if(response.success) {
+                            alert('Tài khoản đã được xóa thành công.');
+                            location.reload(); // Tải lại trang để cập nhật danh sách
+                        } else {
+                            alert('Lỗi khi xóa tài khoản: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Không thể kết nối đến server khi xóa tài khoản.');
+                    }
+                });
+            }
+        }
+        </script>
+
 
 </body>
 
