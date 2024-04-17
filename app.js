@@ -9,7 +9,9 @@ var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
 var authRouter = require('./routes/auth');
 var productRouter = require('./routes/product');
+var cartRouter = require('./routes/cart');
 const categoryRouter = require('./routes/category');
+const orderRouter = require('./routes/order');
 var app = express();
 
 // Cài đặt view engine
@@ -30,8 +32,10 @@ app.use('/public', express.static('public'));
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter);
+app.use('/cart', cartRouter);
 app.use('/product', productRouter);
 app.use('/category', categoryRouter);
+app.use('/order', orderRouter);
 // Thêm tuyến đường GET cho forgotPassword
 app.get('/forgotPassword', function(req, res) {
   res.render('forgotPassword');  // Sử dụng EJS để render trang

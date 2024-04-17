@@ -168,12 +168,61 @@
                             </div>
                         </li>
 
-                       
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <!-- Counter - Alerts -->
+                                <span class="badge badge-danger badge-counter">3+</span>
+                            </a>
+                            <!-- Dropdown - Alerts -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">
+                                    Alerts Center
+                                </h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 12, 2019</div>
+                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-success">
+                                            <i class="fas fa-donate text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 7, 2019</div>
+                                        $290.29 has been deposited into your account!
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-warning">
+                                            <i class="fas fa-exclamation-triangle text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 2, 2019</div>
+                                        Spending Alert: We've noticed unusually high spending for your account.
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                            </div>
+                        </li>
+
                    
 
                         <!-- Nav Item - User Information -->
                        
-
                     </ul>
 
                 </nav>
@@ -184,27 +233,26 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Danh mục sản phẩm</h1>
-                        <button id="btnAddCategory" class="btn btn-primary">Thêm Danh Mục</button>
-                       
+                        <h1 class="h3 mb-0 text-gray-800">Đơn hàng</h1>
                     </div>
 
                     <!-- Content Row -->
                     <div class="container">
-                        <h2>Danh sách</h2>
+                        <h2>Danh sách đơn hàng</h2>
                         <div class="table-responsive">
-                            <table class="table table-bordered" id="categoryTable">
+                            <table class="table table-bordered" id="orderTable">
                                 <thead>
                                     <tr>
-                                        <th>Tên Danh mục</th>
-                                        <th>Chức Năng</th>  
+                                        <th>User</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Địa chỉ</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Các dòng sản phẩm sẽ được thêm vào đây bằng JavaScript -->
+                                    <!-- Các dòng đơn hàng sẽ được thêm vào đây bằng JavaScript -->
                                 </tbody>
                             </table>
-                        </div>
                     </div>
                 </div>
                 <!-- /.container-fluid -->
@@ -267,61 +315,38 @@
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-      $(document).ready(function() {
-    $.ajax({
-        url: '/category/',  
-        type: 'GET',
-        success: function(response) {
-            if(response.success) {
-                const categories = response.data.categories; // Truy cập vào trường categories của đối tượng phản hồi
-                categories.forEach(category => {
-                    console.log(category._id); // Sử dụng _id hoặc id tùy theo cách bạn đã đặt trong schema của mongoose
-                    $('#categoryTable tbody').append(`
-                        <tr>
-                            <td>${category.name}</td>
-                            <td>
-                                <a href="/adminCategory_Edit?id=${category._id}" class="btn btn-primary">Sửa</a> <!-- Thêm nút chỉnh sửa -->
-                                <button onclick="deleteCategory('${category._id}')" class="btn btn-danger">Xóa</button>
-                            </td>
-                        </tr>
-                    `);
-                });
-            } else {
-                alert('Lỗi khi tải dữ liệu: ' + response.message);
+        // Gửi yêu cầu AJAX để lấy danh sách đơn hàng
+        $.ajax({
+            url: '/order/',
+            type: 'GET',
+            success: function(data) {
+                if (data.success) {
+                    var orders = data.data.orders;
+                    var orderTableBody = $('#orderTable tbody');
+
+                    // Hiển thị danh sách đơn hàng
+                    $.each(orders, function(index, order) {
+                        var row = $('<tr></tr>');
+
+                        row.append('<td>' + (order.userId.username || order.userId) + '</td>'); // Hiển thị tên người dùng hoặc userID nếu tên không có
+                        row.append('<td>' + new Date(order.createdAt).toLocaleDateString() + '</td>');
+                        row.append('<td>' + order.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) + '</td>');;
+                        row.append('<td>' + order.address + '</td>');
+
+                        var actionCell = $('<td></td>');
+                       
+
+                        orderTableBody.append(row);
+                    });
+                } else {
+                    console.error('Lấy đơn hàng thất bại:', data.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi lấy đơn hàng:', error);
             }
-        },
-        error: function() {
-            alert('Không thể kết nối đến server.');
-        }
-    });
-});
-$(document).ready(function() {
-        $('#btnAddCategory').click(function() {
-            window.location.href = '/adminCategory_Add'; // Điều hướng đến trang thêm danh mục khi nhấn nút "Thêm Danh Mục"
         });
-    });
-        function deleteCategory(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa danh mục này không?')) {
-                $.ajax({
-                    url: `/category/${id}`,
-                    type: 'DELETE',
-                    success: function(response) {
-                        if(response.success) {
-                            alert('Danh mục đã được xóa thành công.');
-                            location.reload(); // Tải lại trang để cập nhật danh sách
-                        } else {
-                            alert('Lỗi khi xóa danh mục: ' + response.message);
-                        }
-                    },
-                    error: function() {
-                        alert('Không thể kết nối đến server khi xóa danh mục.');
-                    }
-                });
-            }
-        }
-        </script>
-
-
+    </script>
 </body>
 
 </html>

@@ -50,5 +50,16 @@ router.get('/adminUser_Edit', function(req, res, next) {
 router.get('/adminProduct_Add', function(req, res, next) {
   res.render('adminProduct_Add', { title: 'Product' });
 });
-
+router.get('/adminOrder', function(req, res, next) {
+  res.render('adminOrder', { title: 'Order' });
+});
+router.get('/usercart', function(req, res, next) {
+  res.render('usercart', { title: 'cart' });
+});
+router.get('/checkout', function(req, res, next) {
+  res.render('checkout', { title: 'checkout' });
+});
+router.get('/success', function(req, res, next) {
+  res.render('success', { title: 'success' });
+});
 module.exports = router;

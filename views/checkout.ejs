@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -13,9 +11,7 @@
 
     <!-- Custom fonts for this template-->
     <link href="../public/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="../public/css/sb-admin-2.min.css" rel="stylesheet">
@@ -59,38 +55,15 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
                     <span>Pages</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="/login">Login</a>
-                        <a class="collapse-item" href="/register">Register</a>
+                        <h6 class="collapse-header">Page</h6>
                         <a class="collapse-item" href="/changePassword">Change Password</a>
-                        <a class="collapse-item" href="/forgotPassword">Forgot Password</a>
-                    </div>
-                </div>
-            </li>
-
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Chức năng</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Chức năng:</h6>
-                        <a class="collapse-item" href="/adminProduct">Sản Phẩm</a>
-                        <a class="collapse-item" href="/adminUser">User</a>
-                        <a class="collapse-item" href="/adminCategory">Danh mục sản phẩm</a>
-                        <a class="collapse-item" href="/adminOrder">Đơn hàng</a>
+                        <a class="collapse-item" href="/usercart">Cart</a>
                     </div>
                 </div>
             </li>
@@ -128,8 +101,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
                                 aria-label="Search" aria-describedby="basic-addon2">
@@ -146,18 +118,14 @@
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-search fa-fw"></i>
                             </a>
                             <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
                                 <form class="form-inline mr-auto w-100 navbar-search">
                                     <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
+                                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
@@ -168,11 +136,57 @@
                             </div>
                         </li>
 
-                       
-                   
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <!-- Counter - Alerts -->
+                                <span class="badge badge-danger badge-counter">3+</span>
+                            </a>
+                            <!-- Dropdown - Alerts -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">
+                                    Alerts Center
+                                </h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 12, 2019</div>
+                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-success">
+                                            <i class="fas fa-donate text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 7, 2019</div>
+                                        $290.29 has been deposited into your account!
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-warning">
+                                            <i class="fas fa-exclamation-triangle text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 2, 2019</div>
+                                        Spending Alert: We've noticed unusually high spending for your account.
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                            </div>
+                        </li>
 
                         <!-- Nav Item - User Information -->
-                       
+                      
 
                     </ul>
 
@@ -184,27 +198,22 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Danh mục sản phẩm</h1>
-                        <button id="btnAddCategory" class="btn btn-primary">Thêm Danh Mục</button>
-                       
                     </div>
 
                     <!-- Content Row -->
                     <div class="container">
-                        <h2>Danh sách</h2>
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="categoryTable">
-                                <thead>
-                                    <tr>
-                                        <th>Tên Danh mục</th>
-                                        <th>Chức Năng</th>  
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Các dòng sản phẩm sẽ được thêm vào đây bằng JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
+                        <h2>Checkout</h2>
+                        <form id="checkoutForm">
+                            <div class="form-group">
+                                <label for="totalPrice">Tổng tiền:</label>
+                                <input type="text" class="form-control" id="totalPrice" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Địa chỉ giao hàng:</label>
+                                <input type="text" class="form-control" id="address" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Thanh toán</button>
+                        </form>
                     </div>
                 </div>
                 <!-- /.container-fluid -->
@@ -234,8 +243,7 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -266,62 +274,58 @@
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script> 
     <script>
-      $(document).ready(function() {
-    $.ajax({
-        url: '/category/',  
-        type: 'GET',
-        success: function(response) {
-            if(response.success) {
-                const categories = response.data.categories; // Truy cập vào trường categories của đối tượng phản hồi
-                categories.forEach(category => {
-                    console.log(category._id); // Sử dụng _id hoặc id tùy theo cách bạn đã đặt trong schema của mongoose
-                    $('#categoryTable tbody').append(`
-                        <tr>
-                            <td>${category.name}</td>
-                            <td>
-                                <a href="/adminCategory_Edit?id=${category._id}" class="btn btn-primary">Sửa</a> <!-- Thêm nút chỉnh sửa -->
-                                <button onclick="deleteCategory('${category._id}')" class="btn btn-danger">Xóa</button>
-                            </td>
-                        </tr>
-                    `);
-                });
-            } else {
-                alert('Lỗi khi tải dữ liệu: ' + response.message);
+document.addEventListener("DOMContentLoaded", function() {
+    // Giả sử totalPrice được lưu trữ trong localStorage hoặc từ form giỏ hàng
+    const totalPrice = localStorage.getItem("totalPrice"); // Hoặc bất kỳ cách nào bạn đã lưu giá trị này
+    document.getElementById('totalPrice').value = totalPrice;
+
+    const form = document.getElementById('checkoutForm');
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        const address = document.getElementById('address').value;
+        var token = Cookies.get('token'); // Giả sử token được lưu trong cookie
+        
+                if (!token) {
+                    alert('Bạn chưa đăng nhập. Vui lòng đăng nhập để đổi mật khẩu.');
+                    return;
+                }
+        $.ajax({
+            url: '/order/checkout',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ totalPrice: totalPrice, address: address }),
+            headers: {
+                Authorization: 'Bearer ' + token  // token xác thực
+            },
+            success: function(response) {
+                alert('Thanh toán thành công!');
+                // Có thể chuyển hướng người dùng sau khi thành công
+                deleteCart(token);
+            },
+            error: function(xhr, status, error) {
+                alert('Lỗi thanh toán: ' + xhr.responseText);
             }
-        },
-        error: function() {
-            alert('Không thể kết nối đến server.');
-        }
-    });
-});
-$(document).ready(function() {
-        $('#btnAddCategory').click(function() {
-            window.location.href = '/adminCategory_Add'; // Điều hướng đến trang thêm danh mục khi nhấn nút "Thêm Danh Mục"
         });
-    });
-        function deleteCategory(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa danh mục này không?')) {
-                $.ajax({
-                    url: `/category/${id}`,
-                    type: 'DELETE',
-                    success: function(response) {
-                        if(response.success) {
-                            alert('Danh mục đã được xóa thành công.');
-                            location.reload(); // Tải lại trang để cập nhật danh sách
-                        } else {
-                            alert('Lỗi khi xóa danh mục: ' + response.message);
-                        }
-                    },
-                    error: function() {
-                        alert('Không thể kết nối đến server khi xóa danh mục.');
-                    }
-                });
+    };
+     // Hàm xóa giỏ hàng
+     function deleteCart(token) {
+        $.ajax({
+            url: '/cart/',
+            type: 'DELETE',
+            headers: {
+                Authorization: 'Bearer ' + token
+            },
+            success: function(response) {
+                window.location.href = '/success'; // Chuyển hướng sau khi xóa giỏ hàng và thanh toán thành công
+            },
+            error: function(xhr, status, error) {
+                alert('Lỗi khi xóa giỏ hàng: ' + xhr.responseText);
             }
-        }
-        </script>
-
-
+        });
+    }
+});
+    </script>
 </body>
-
 </html>

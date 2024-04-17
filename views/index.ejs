@@ -62,7 +62,9 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Page</h6>
+                        <a class="collapse-item" href="/login">Login</a>
                         <a class="collapse-item" href="/changePassword">Change Password</a>
+                        <a class="collapse-item" href="/usercart">Cart</a>
                     </div>
                 </div>
             </li>
@@ -185,32 +187,7 @@
                         </li>
 
                         <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                                <img class="img-profile rounded-circle" src="..public/img/undraw_profile.svg">
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
+                       
 
                     </ul>
 
@@ -289,28 +266,98 @@
 
     <!-- Page level plugins -->
     <script src="../public/vendor/chart.js/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script> 
     <script>
+// $(document).ready(function() {
+//     $.ajax({
+//         url:'/product/',  // Đảm bảo URL này đúng với cấu hình của bạn
+//         type: 'GET',
+//         success: function(response) {
+//             if(response.success) {
+//                 const products = response.data;
+//                 products.forEach(function(product) {
+//                     $('#productList').append(`
+//                         <div class="col-md-4 mb-4">
+//                           <div class="card" style="width: 18rem;">
+//                               <img src="/public/${product.image}" class="card-img-top" alt="Product Image" style="max-width: 100%; max-height: 200px;">
+//                               <div class="card-body">
+//                                 <h5 class="card-title">${product.name}</h5>
+//                                 <p class="card-text">Giá: ${product.price} VND</p>
+//                                 <p class="card-text">Danh mục: ${product.categoryName}</p>
+//                                 <a href="#" class="btn btn-primary add-to-cart" data-product-id="${product._id}">Thêm vào giỏ hàng</a>
+//                               </div>
+//                           </div>
+//                         </div>
+//                     `);
+                   
+//                 });
+//             } else {
+//                 alert('Lỗi khi tải dữ liệu: ' + response.message);
+//             }
+//         },
+//         error: function() {
+//             alert('Không thể kết nối đến server.');
+//         }
+//     });
+    
+// });
 $(document).ready(function() {
     $.ajax({
-        url:'/product/',  // Đảm bảo URL này đúng với cấu hình của bạn
+        url: '/product/',
         type: 'GET',
         success: function(response) {
-            if(response.success) {
+            if (response.success) {
                 const products = response.data;
                 products.forEach(function(product) {
                     $('#productList').append(`
                         <div class="col-md-4 mb-4">
                           <div class="card" style="width: 18rem;">
-                              <img src="/public/${product.image}" class="card-img-top" alt="Product Image" style="max-width: 100%; max-height: 200px;">
+                              <img src="/public/${product.image}" class="card-img-top" alt="Product Image" style="max-width: 100%; max-height: 300px;">
                               <div class="card-body">
                                 <h5 class="card-title">${product.name}</h5>
                                 <p class="card-text">Giá: ${product.price} VND</p>
                                 <p class="card-text">Danh mục: ${product.categoryName}</p>
-                                <a href="#" class="btn btn-primary">Xem chi tiết</a>
+                                <a href="#" class="btn btn-primary add-to-cart" data-product-id="${product._id}">Thêm vào giỏ hàng</a>
                               </div>
                           </div>
                         </div>
                     `);
+                });
+
+                // Xử lý sự kiện click cho nút "Thêm vào giỏ hàng"
+                $('.add-to-cart').click(function(e) {
+                    e.preventDefault();
+                    const productId = $(this).data('product-id');
+                    const quantity = 1; // Số lượng mặc định là 1, bạn có thể thay đổi nếu cần
+                    var token = Cookies.get('token'); // Giả sử token được lưu trong cookie
+        
+                    if (!token) {
+                      alert('Bạn chưa đăng nhập. Vui lòng đăng nhập để đổi mật khẩu.');
+                      return;
+                    }
+                    $.ajax({
+                        url: '/cart/add',
+                        type: 'POST',
+                        headers: {
+                        'Authorization': 'Bearer ' + token
+                        },
+                        data: {
+                            productId: productId,
+                            quantity: quantity
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Thêm sản phẩm vào giỏ hàng thành công');
+                                // Cập nhật giỏ hàng nếu cần
+                            } else {
+                                alert('Lỗi khi thêm sản phẩm vào giỏ hàng: ' + response.message);
+                            }
+                        },
+                        error: function() {
+                            alert('Không thể kết nối đến server.');
+                        }
+                    });
                 });
             } else {
                 alert('Lỗi khi tải dữ liệu: ' + response.message);
@@ -321,7 +368,6 @@ $(document).ready(function() {
         }
     });
 });
-
     </script>
 </body>
 </html>
